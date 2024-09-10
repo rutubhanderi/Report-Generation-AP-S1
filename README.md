@@ -1,4 +1,4 @@
-# Apreportgen
+# Report GenX
 
 This project uses React and Reactstrap to build a user interface. Follow the instructions below to set up and run the project.
 
