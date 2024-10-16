@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import backgroundImage from '../assets/loginbgap.png'; 
 
 const Login = () => {
-  const [role, setRole] = useState('admin');
+  const { loginWithRedirect } = useAuth0();
+  const [role, setRole] = useState('admin'); // Default role
   const [credentials, setCredentials] = useState({ email: '', password: '' });
 
   const handleInputChange = (e) => {
@@ -14,10 +16,14 @@ const Login = () => {
     setRole(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log(`Role: ${role}, Email: ${credentials.email}, Password: ${credentials.password}`);
+
+    // Pass the role along with the login
+    await loginWithRedirect({
+      login_hint: credentials.email,  // Pre-populate email
+      appState: { role },  // Store the role in appState for later redirection
+    });
   };
 
   return (
@@ -42,7 +48,7 @@ const Login = () => {
             className="w-full border border-gray-300 p-2 rounded"
           >
             <option value="admin">Admin</option>
-            <option value="member">Member</option>
+            <option value="employee">Employee</option>
             <option value="volunteer">Volunteer</option>
           </select>
         </div>
