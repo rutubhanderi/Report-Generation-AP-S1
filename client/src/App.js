@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home'; 
 import Login from './pages/Login';
-// import AdminDashboard from './pages/AdminDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 // import EmployeeDashboard from './pages/EmployeeDashboard';
 // import VolunteerDashboard from './pages/VolunteerDashboard';
 
@@ -48,14 +48,15 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         {/* Private Routes */}
-        {/* <Route 
+        <Route 
           path="/admin-dashboard" 
           element={
             <PrivateRoute>
               <AdminDashboard />
             </PrivateRoute>
           } 
-        /> */}
+        />
+        {/* Uncomment the below routes if needed */}
         {/* <Route 
           path="/employee-dashboard" 
           element={
@@ -63,8 +64,8 @@ function App() {
               <EmployeeDashboard />
             </PrivateRoute>
           } 
-        /> */}
-        {/* <Route 
+        />
+        <Route 
           path="/volunteer-dashboard" 
           element={
             <PrivateRoute>
