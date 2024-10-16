@@ -1,18 +1,23 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home'; // Importing the Home page
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import AdminDashboard from './pages/AdminDashboard';
+import EmployeeDashboard from './pages/EmployeeDashboard';
+import VolunteerDashboard from './pages/VolunteerDashboard';
 
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Set Home as the default route */}
-        <Route path="/" element={<Home />} />
-        {/* Optional: Add a catch-all route for 404 pages */}
-        <Route path="*" element={<Home />} /> {/* Redirect unknown paths to Home */}
-      </Routes>
-    </BrowserRouter>
-  );
-}
+const App = () => {
+    return (
+        <Router>
+            <Switch>
+                <Route path="/" exact component={HomePage} />
+                <Route path="/login" component={LoginPage} />
+                <Route path="/admin" component={AdminDashboard} />
+                <Route path="/employee" component={EmployeeDashboard} />
+                <Route path="/volunteer" component={VolunteerDashboard} />
+            </Switch>
+        </Router>
+    );
+};
 
 export default App;
