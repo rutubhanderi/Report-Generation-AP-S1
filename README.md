@@ -10,15 +10,12 @@ Ensure you have Node.js and npm installed on your machine. If not, you can downl
 
 1. Navigate to the project directory:
 
-    ```bash
-    cd apreportgen
-    ```
-
 2. Install the required npm packages:
 
     ```bash
     npm install react react-dom reactstrap
-    npm install --save bootstrap
+    npm install -D tailwindcss
+    npx tailwindcss init
     ```
 
 ## Running the Project
