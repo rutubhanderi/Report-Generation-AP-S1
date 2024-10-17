@@ -16,6 +16,7 @@ Ensure you have Node.js and npm installed on your machine. If not, you can downl
     npm install react react-dom reactstrap
     npm install -D tailwindcss
     npx tailwindcss init
+    npm install lucide-react
     ```
 
 ## Running the Project
