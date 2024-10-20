@@ -1,8 +1,10 @@
-import React from 'react';
-import { FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { FileText, Plus } from 'lucide-react';
+import CreateReport from './CreateReport';
 
 const ReportsTable = () => {
-  const reports = [
+  const [view, setView] = useState('table');
+  const [reports, setReports] = useState([
     {
       id: 1,
       name: 'Q1 Financial Report',
@@ -21,16 +23,48 @@ const ReportsTable = () => {
       status: 'Pending',
       member: 'Mike Wilson'
     }
-  ];
+  ]);
+
+  const handleAddReport = (formData) => {
+    const newReport = {
+      id: reports.length + 1,
+      name: formData.report_name,
+      status: 'Pending',
+      member: 'Current User', // This could be dynamic based on logged-in user
+      // Store other form data as needed
+      date: formData.report_date,
+      tasksCompleted: formData.tasks_completed,
+      tasksPending: formData.tasks_pending,
+      hoursWorked: formData.total_hours_worked,
+      rating: formData.performance_rating,
+      comments: formData.comments
+    };
+
+    setReports([...reports, newReport]);
+    setView('table');
+  };
+
+  if (view === 'create') {
+    return <CreateReport onBack={() => setView('table')} onSubmit={handleAddReport} />;
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-      {/* Header */}
+      {/* Header with Create Button */}
       <div className="bg-blue-600 text-white p-4 rounded-t-lg">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <FileText size={24} />
-          REPORTS
-        </h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold flex items-center gap-2">
+            <FileText size={24} />
+            REPORTS
+          </h2>
+          <button 
+            className="flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
+            onClick={() => setView('create')}
+          >
+            <Plus size={16} />
+            Create Report
+          </button>
+        </div>
       </div>
 
       {/* Table */}
@@ -54,7 +88,7 @@ const ReportsTable = () => {
           </thead>
           <tbody>
             {reports.map((report) => (
-              <tr 
+              <tr
                 key={report.id}
                 className="border-b border-blue-50 hover:bg-blue-50 transition-colors"
               >

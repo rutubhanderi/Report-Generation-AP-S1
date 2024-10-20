@@ -43,7 +43,7 @@ const VolunteerSidebar = () => {
             <div
               key={item.id}
               onClick={() => setActiveSection(item.id)}
-              className={`flex items-center space-x-4 text-white p-4 my-2 rounded-lg cursor-pointer transition-all hover:bg-blue-800 ${
+              className={`flex items-center space-x-4 text-white p-4 my-2 rounded-lg cursor-pointer transition-all hover:bg-blue-800 w-full ${
                 !isOpen && 'justify-center'
               } ${activeSection === item.id ? 'bg-blue-800' : ''}`}
             >
