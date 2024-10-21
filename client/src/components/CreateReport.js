@@ -8,12 +8,14 @@ import {
   MessageSquare, 
   ArrowLeft, 
   Save,
-  FileText 
+  FileText,
+  AlignLeft
 } from 'lucide-react';
 
 const CreateReport = ({ onBack, onSubmit }) => {
   const [formData, setFormData] = useState({
     report_name: '',
+    description: '',
     report_date: '',
     tasks_completed: '',
     tasks_pending: '',
@@ -68,7 +70,22 @@ const CreateReport = ({ onBack, onSubmit }) => {
             />
           </div>
 
-          {/* Rest of the form fields remain the same */}
+          {/* Report Description */}
+          <div className="mb-6">
+            <label className="block mb-2 flex items-center text-gray-700 font-medium">
+              <AlignLeft size={18} className="mr-2 text-blue-600" />
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Enter report description..."
+              className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none min-h-[80px]"
+              required
+            />
+          </div>
+
           {/* Report Date */}
           <div className="mb-6">
             <label className="block mb-2 flex items-center text-gray-700 font-medium">

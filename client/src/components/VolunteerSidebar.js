@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ChevronLeft, UserCircle, BarChart, Clock } from 'lucide-react';
 import ProfileSection from './ProfileSection';
 import ReportsTable from './ReportsTable';
-import TimeLogTable from './Timelog';
+
 
 const VolunteerSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +13,7 @@ const VolunteerSidebar = () => {
   const menuItems = [
     { title: 'Profile', icon: <UserCircle size={20} />, id: 'profile' },
     { title: 'Reports', icon: <BarChart size={20} />, id: 'reports' },
-    { title: 'Time Logs', icon: <Clock size={20} />, id: 'timelogs' },
+    
   ];
 
   return (
@@ -60,12 +60,7 @@ const VolunteerSidebar = () => {
       <div className="flex-1 p-6">
         {activeSection === 'profile' && <ProfileSection />}
         {activeSection === 'reports' && <ReportsTable />}
-        {activeSection === 'timelogs' && (
-          <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6">
-            <h3 className="text-xl font-semibold text-blue-900 mb-4">Time Logs</h3>
-            <TimeLogTable />
-          </div>
-        )}
+        
       </div>
     </div>
   );

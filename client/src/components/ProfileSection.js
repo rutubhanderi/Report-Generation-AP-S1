@@ -5,15 +5,12 @@ const ProfileSection = () => {
   // This would typically come from your data/API
   const volunteerData = {
     name: "Sarah Johnson",
-    age: 28,
+    
     email: "sarah.johnson@email.com",
     phone: "(555) 123-4567",
     address: "123 Volunteer Street, Charity City, CC 12345",
     joinDate: "January 15, 2024",
-    occupation: "Software Engineer",
-    skills: ["Project Management", "Event Planning", "Teaching", "First Aid"],
-    volunteeredHours: 156,
-    assignedProjects: 12
+    
   };
 
   const InfoRow = ({ icon, label, value }) => (
@@ -70,48 +67,14 @@ const ProfileSection = () => {
                 label="Joined Date"
                 value={volunteerData.joinDate}
               />
-              <InfoRow 
-                icon={<Briefcase size={20} />}
-                label="Occupation"
-                value={volunteerData.occupation}
-              />
-              <InfoRow 
-                icon={<Award size={20} />}
-                label="Age"
-                value={`${volunteerData.age} years`}
-              />
+             
+              
             </div>
           </div>
 
-          {/* Skills Section */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-blue-900 mb-4">Skills & Expertise</h2>
-            <div className="flex flex-wrap gap-2">
-              {volunteerData.skills.map((skill, index) => (
-                <span 
-                  key={index}
-                  className="bg-blue-100 text-blue-900 px-3 py-1 rounded-full text-sm"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </div>
+          
 
-          {/* Statistics */}
-          <div>
-            <h2 className="text-xl font-semibold text-blue-900 mb-4">Volunteer Statistics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 rounded-lg p-4">
-                <p className="text-blue-900 text-sm">Total Hours Volunteered</p>
-                <p className="text-2xl font-bold text-blue-900">{volunteerData.volunteeredHours} hours</p>
-              </div>
-              <div className="bg-blue-50 rounded-lg p-4">
-                <p className="text-blue-900 text-sm">Projects Participated</p>
-                <p className="text-2xl font-bold text-blue-900">{volunteerData.assignedProjects} projects</p>
-              </div>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>
