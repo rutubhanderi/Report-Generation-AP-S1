@@ -39,9 +39,7 @@ const Login = () => {
           case 'admin':
             navigate('/admin');
             break;
-          case 'member':
-            navigate('/member');
-            break;
+          
           case 'volunteer':
             navigate('/volunteer');
             break;
@@ -62,8 +60,7 @@ const Login = () => {
     switch (userRole) {
       case 'admin':
         return <Shield className="w-5 h-5" />;
-      case 'member':
-        return <User className="w-5 h-5" />;
+      
       case 'volunteer':
         return <Users className="w-5 h-5" />;
       default:
@@ -105,7 +102,7 @@ const Login = () => {
                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="admin">Admin</option>
-                <option value="member">Member</option>
+               
                 <option value="volunteer">Volunteer</option>
               </select>
               <span className="absolute left-3 top-2.5 text-gray-500">

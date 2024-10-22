@@ -1,7 +1,20 @@
-import React from 'react';
-import { ArrowLeft, Edit2, Clock, CheckSquare, Square, Star, AlignLeft } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  ArrowLeft, 
+  Edit2, 
+  Clock, 
+  CheckSquare, 
+  Square, 
+  AlignLeft,
+  ListTodo,
+  CheckCircle,
+  XCircle
+} from 'lucide-react';
+import EditReportModal from './EditReport';
 
 const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -10,19 +23,9 @@ const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
     );
   }
 
-  const renderStarRating = (rating) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          className={`w-5 h-5 ${
-            i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
-          }`}
-        />
-      );
-    }
-    return stars;
+  const handleSave = (updatedReport) => {
+    onEdit(updatedReport);
+    setIsEditModalOpen(false);
   };
 
   return (
@@ -38,7 +41,7 @@ const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
             Back to Reports
           </button>
           <button
-            onClick={() => onEdit(report.id)}
+            onClick={() => setIsEditModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
           >
             <Edit2 size={16} />
@@ -114,12 +117,41 @@ const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
           </div>
         </div>
 
-        {/* Performance Rating */}
+        {/* Tasks Section */}
         <div className="mt-8">
-          <h3 className="text-sm font-medium text-gray-500">Performance Rating</h3>
-          <div className="flex items-center gap-1 mt-2">
-            {renderStarRating(parseInt(report.rating))}
+          <div className="flex items-center gap-2 mb-4">
+            <ListTodo className="text-blue-600" size={20} />
+            <h3 className="text-sm font-medium text-gray-500">Tasks</h3>
           </div>
+          
+          {report.tasks && report.tasks.length > 0 ? (
+            <div className="space-y-2 bg-gray-50 rounded-lg p-4">
+              {report.tasks.map((task, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-white rounded-md shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    {task.completed ? (
+                      <CheckCircle className="text-green-500" size={18} />
+                    ) : (
+                      <XCircle className="text-gray-400" size={18} />
+                    )}
+                    <span className={`${task.completed ? 'text-gray-600' : 'text-gray-800'}`}>
+                      {task.name || task}
+                    </span>
+                  </div>
+                  {task.dueDate && (
+                    <span className="text-sm text-gray-500">
+                      Due: {new Date(task.dueDate).toLocaleDateString()}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-sm italic">No tasks added to this report</p>
+          )}
         </div>
 
         {/* Comments Section */}
@@ -130,6 +162,14 @@ const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
           </div>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      <EditReportModal
+        report={report}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={handleSave}
+      />
     </div>
   );
 };
