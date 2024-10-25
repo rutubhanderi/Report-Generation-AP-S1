@@ -266,23 +266,10 @@ const CreateReport = ({ onBack, onSubmit }) => {
             <h1 className="text-2xl font-bold text-gray-900">
               Create New Report
             </h1>
-            <button
-              type="button"
-              onClick={handlePrint}
-              className={`flex items-center px-4 py-2 rounded transition-colors ${
-                formData.report_name
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-100 text-gray-400 cursor-not-allowed"
-              }`}
-              disabled={!formData.report_name}
-            >
-              <Printer size={18} className="mr-2" />
-              Print Report
-            </button>
+            
           </div>
         </div>
 
-        {/* Rest of the form remains unchanged */}
         <form
           onSubmit={handleSubmit}
           className="bg-white rounded-lg shadow-md p-6"

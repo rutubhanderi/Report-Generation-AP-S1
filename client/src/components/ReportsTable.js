@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Plus, Eye } from 'lucide-react';
+import { FileText, Plus, Eye, Printer } from 'lucide-react';
 import CreateReport from './CreateReport';
 import ViewReport from './ViewReport';
 
@@ -69,9 +69,102 @@ const ReportsTable = () => {
     setView('view');
   };
 
-  const handleEditReport = (reportId) => {
-    // Implement edit functionality here
-    console.log('Editing report:', reportId);
+  const handlePrintReport = (report) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      alert("Please allow pop-ups to print the report");
+      return;
+    }
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Report - ${report.name}</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              padding: 40px;
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+            }
+            .section {
+              margin-bottom: 20px;
+            }
+            .label {
+              font-weight: bold;
+              margin-right: 10px;
+            }
+            .divider {
+              border-top: 1px solid #ccc;
+              margin: 20px 0;
+            }
+            @media print {
+              @page {
+                margin: 2cm;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Report</h1>
+            <p>Date: ${report.date}</p>
+          </div>
+          
+          <div class="section">
+            <span class="label">Report Name:</span>
+            ${report.name}
+          </div>
+
+          <div class="section">
+            <span class="label">Status:</span>
+            ${report.status}
+          </div>
+
+          <div class="section">
+            <span class="label">Member Assigned:</span>
+            ${report.member}
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="section">
+            <span class="label">Tasks Completed:</span>
+            ${report.tasksCompleted}
+          </div>
+
+          <div class="section">
+            <span class="label">Tasks Pending:</span>
+            ${report.tasksPending}
+          </div>
+
+          <div class="section">
+            <span class="label">Hours Worked:</span>
+            ${report.hoursWorked}
+          </div>
+
+          ${report.comments ? `
+            <div class="divider"></div>
+            <div class="section">
+              <span class="label">Comments:</span>
+              <div>${report.comments}</div>
+            </div>
+          ` : ''}
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+    setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+    }, 250);
   };
 
   // Render different views based on state
@@ -87,7 +180,7 @@ const ReportsTable = () => {
           setView('table');
           setSelectedReport(null);
         }}
-        onEdit={handleEditReport}
+        onPrint={() => handlePrintReport(selectedReport)}
         isLoading={false}
       />
     );
@@ -152,13 +245,20 @@ const ReportsTable = () => {
                   </span>
                 </td>
                 <td className="py-3 px-4 text-blue-900">{report.member}</td>
-                <td className="py-3 px-4">
+                <td className="py-3 px-4 flex gap-2">
                   <button
                     onClick={() => handleViewReport(report.id)}
                     className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
                     title="View Report"
                   >
                     <Eye size={18} />
+                  </button>
+                  <button
+                    onClick={() => handlePrintReport(report)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                    title="Print Report"
+                  >
+                    <Printer size={18} />
                   </button>
                 </td>
               </tr>
