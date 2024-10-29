@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  ArrowLeft, 
-  Edit2, 
+  ArrowLeft,
   Clock, 
   CheckSquare, 
   Square, 
@@ -10,7 +9,7 @@ import {
   CheckCircle,
   XCircle
 } from 'lucide-react';
-import EditReportModal from './EditReport';
+
 
 const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -39,13 +38,6 @@ const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
           >
             <ArrowLeft size={20} />
             Back to Reports
-          </button>
-          <button
-            onClick={() => setIsEditModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
-          >
-            <Edit2 size={16} />
-            Edit Report
           </button>
         </div>
         <h1 className="text-2xl font-bold mt-4">{report.name}</h1>
@@ -163,13 +155,7 @@ const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
         </div>
       </div>
 
-      {/* Edit Modal */}
-      <EditReportModal
-        report={report}
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSave={handleSave}
-      />
+      
     </div>
   );
 };

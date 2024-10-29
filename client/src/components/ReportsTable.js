@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { FileText, Plus, Eye, Printer } from 'lucide-react';
+import { FileText, Plus, Eye, Printer, Edit } from 'lucide-react';
 import CreateReport from './CreateReport';
 import ViewReport from './ViewReport';
+import EditReport from './EditReport';
 
 const ReportsTable = () => {
   const [view, setView] = useState('table');
@@ -74,8 +75,7 @@ const ReportsTable = () => {
     if (!printWindow) {
       alert("Please allow pop-ups to print the report");
       return;
-    }
-
+    }    
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -186,6 +186,54 @@ const ReportsTable = () => {
     );
   }
 
+  const handleEditReport = (reportId) => {
+    const report = reports.find(r => r.id === reportId);
+    setSelectedReport(report);
+    setView('edit');
+  };
+
+  const handleUpdateReport = (updatedReport) => {
+    const updatedReports = reports.map(report => {
+      if (report.id === updatedReport.id) {
+        return updatedReport;
+      }
+      return report;
+    });
+    setReports(updatedReports);
+    setView('table');
+  };
+
+  if (view === 'create') {
+    return <CreateReport onBack={() => setView('table')} onSubmit={handleAddReport} />;
+  }
+
+  if (view === 'view' && selectedReport) {
+    return (
+      <ViewReport
+        report={selectedReport}
+        onBack={() => {
+          setView('table');
+          setSelectedReport(null);
+        }}
+        onPrint={() => handlePrintReport(selectedReport)}
+        isLoading={false}
+      />
+    );
+  }
+
+  if (view === 'edit' && selectedReport) {
+    return (
+      <EditReport
+        report={selectedReport}
+        onBack={() => {
+          setView('table');
+          setSelectedReport(null);
+        }}
+        onUpdate={handleUpdateReport}
+      />
+    );
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
       {/* Header with Create Button */}
@@ -259,6 +307,13 @@ const ReportsTable = () => {
                     title="Print Report"
                   >
                     <Printer size={18} />
+                  </button>
+                  <button
+                    onClick={() => handleEditReport(report.id)}
+                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                    title="Edit Report"
+                  >
+                    <Edit size={18} />
                   </button>
                 </td>
               </tr>
