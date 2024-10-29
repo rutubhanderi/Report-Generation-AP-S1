@@ -1,9 +1,10 @@
-require('dotenv').config();   // to access the API key from .env file 
+require('dotenv').config();    
 
-import { createClient } from '@supabase/supabase-js'
+const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = process.env.SUPABASE_URL // add your project URL in .env file
-const supabaseKey = process.env.SUPABASE_KEY  // add your project API key in .env file
+const supabaseUrl = process.env.SUPABASE_URL || 'https://nmkantbtewplhkokluuv.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ta2FudGJ0ZXdwbGhrb2tsdXV2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzAxNzM1NTcsImV4cCI6MjA0NTc0OTU1N30.X1tazzbvLVWts_7TTQjJJhfhBVgDllcl5aOt2NQ0ldQ';
+
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 module.exports = supabase

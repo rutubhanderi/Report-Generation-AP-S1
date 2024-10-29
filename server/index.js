@@ -3,9 +3,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser')
 const supabase = require('./db/db');
 
-const AdminRouter = require('./routes/admin');
-const VolunteerRouter = require('./routes/volunteer');
-const TaskRouter = require('./routes/task');
+// const AdminRouter = require('./routes/admin.js');
+const VolunteerRouter = require('./routes/volunteer.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -26,10 +25,8 @@ app.get('/', async (_request, _response) => {
 
 });
 
-app.use('/admin', AdminRouter);
-app.use('/member', MemberRouter);
+// app.use('/admin', AdminRouter);
 app.use('/volunteer', VolunteerRouter);
-app.use('/task', TaskRouter);
 
 app.listen(PORT, ()=> {
   console.log(`listening at port ${PORT}`);
