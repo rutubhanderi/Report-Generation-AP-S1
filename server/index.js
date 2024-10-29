@@ -4,12 +4,11 @@ const bodyParser = require('body-parser')
 const supabase = require('./db/db');
 
 const AdminRouter = require('./routes/admin');
-const MemberRouter = require('./routes/member');
 const VolunteerRouter = require('./routes/volunteer');
 const TaskRouter = require('./routes/task');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -35,5 +34,3 @@ app.use('/task', TaskRouter);
 app.listen(PORT, ()=> {
   console.log(`listening at port ${PORT}`);
 });
-
-
