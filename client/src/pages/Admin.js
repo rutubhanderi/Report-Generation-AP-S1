@@ -6,22 +6,22 @@ import {
   UserPlus,
   Trash2,
   Eye,
-  Download
+  Download,
+  UserCircle
 } from 'lucide-react';
 import Header from '../components/Header'
 import UserManagement from '../components/UserManagement';
 import AdminReportsTable from '../components/AdminReportsTable';
-
+import Profile from '../components/Profile';
 
 const Admins = [
   { id: 1, name: 'John Doe', email: 'john@example.com', password: '********' },
   { id: 2, name: 'Jane Smith', email: 'jane@example.com', password: '********' },
 ];
 
-
 // Main Dashboard Component
 const AdminDashboard = () => {
-  const [currentPage, setCurrentPage] = useState('users');
+  const [currentPage, setCurrentPage] = useState('profile'); // Changed default to 'profile'
 
   const renderContent = () => {
     switch(currentPage) {
@@ -29,8 +29,10 @@ const AdminDashboard = () => {
         return <UserManagement />;
       case 'reports':
         return <AdminReportsTable />;
+      case 'profile':
+        return <Profile />;
       default:
-        return <UserManagement />;
+        return <Profile />; // Changed default to Profile
     }
   };
 
@@ -42,6 +44,17 @@ const AdminDashboard = () => {
           <h2 className="text-2xl font-bold text-blue-500 mb-8">Admin Panel</h2>
           
           <nav className="space-y-2">
+            {/* Profile button moved to top */}
+            <button 
+              onClick={() => setCurrentPage('profile')} 
+              className={`w-full flex items-center gap-3 p-3 text-gray-300 hover:bg-gray-800 rounded-lg ${
+                currentPage === 'profile' ? 'bg-gray-800' : ''
+              }`}
+            >
+              <UserCircle size={20} className="text-blue-500" />
+              <span>Profile</span>
+            </button>
+
             <button 
               onClick={() => setCurrentPage('users')}
               className={`w-full flex items-center gap-3 p-3 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors ${
@@ -68,7 +81,7 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 ml-64">
         <Header/>
-        <main>
+        <main className="p-4">
           {renderContent()}
         </main>
       </div>

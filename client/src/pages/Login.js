@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { LogIn, Shield, User, Users } from 'lucide-react';
+import { LogIn, Shield, User, Users, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import backgroundImage from '../assets/loginbgap.png'; 
+
 const Login = () => {
   const navigate = useNavigate();
   const [role, setRole] = useState('admin');
@@ -98,7 +99,7 @@ const Login = () => {
                 id="role"
                 value={role}
                 onChange={handleRoleChange}
-                className="w-full border border-gray-300 p-2 pl-10 rounded appearance-none 
+                className="w-full border border-gray-300 p-2 pl-10 pr-8 rounded appearance-none 
                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="admin">Admin</option>
@@ -107,6 +108,9 @@ const Login = () => {
               </select>
               <span className="absolute left-3 top-2.5 text-gray-500">
                 {getRoleIcon(role)}
+              </span>
+              <span className="absolute right-3 top-2.5 text-gray-500 pointer-events-none">
+                <ChevronDown className="w-5 h-5" />
               </span>
             </div>
           </div>
