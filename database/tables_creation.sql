@@ -1,4 +1,4 @@
--- Enable pgcrypto extension for secure password hashing
+-- Enable pgcrypto for password hashing
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- Admin Table
@@ -27,16 +27,15 @@ CREATE TABLE Volunteer (
 CREATE TABLE Report (
     Report_id SERIAL PRIMARY KEY,
     Report_name CHAR(100),
-    Assigned_to CHAR(100),
     Task_completed INT,
     Task_pending INT,
     Total_hours FLOAT,
     Date DATE,
-    Volunteer_id INT REFERENCES Volunteer (Volunteer_id) ON DELETE SET NULL,
+    Volunteer_id INT REFERENCES Volunteer (Volunteer_id) ON DELETE SET NULL, -- Foreign key to Volunteer
     Report_Description TEXT,
     Report_Comments TEXT,
     Report_status CHAR(50),
-    Admin_id INT REFERENCES Admin (Admin_id) ON DELETE SET NULL
+    Admin_id INT REFERENCES Admin (Admin_id) ON DELETE SET NULL -- Foreign key to Admin
 );
 
 -- Task Table
