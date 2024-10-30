@@ -5,6 +5,9 @@ const VolunteerRouter = express.Router();
 
 
 VolunteerRouter.get('/', async (_request, _response) => {
+
+  const body = _request.body;
+
   const { data, error } = await supabase
     .from('report')
     .select(`
@@ -24,7 +27,8 @@ VolunteerRouter.get('/', async (_request, _response) => {
   });
 });
 
-VolunteerRouter.get('/', async (_request, _response) => {
+VolunteerRouter.get('/volunteer', async (_request, _response) => {
+  const body= _request.body;
 
   const { data, error } = await supabase
     .from('volunteer')
@@ -35,7 +39,7 @@ VolunteerRouter.get('/', async (_request, _response) => {
   }
 
   return _response.json({
-    data
+    data: data
   });
 });
 
