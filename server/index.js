@@ -16,11 +16,13 @@ app.use(bodyParser.json());
 
 app.get('/', async (_request, _response) => {
 
-  const data = await supabase.from('volunteer').select('*');
+  // const data = await supabase.from('volunteer')
+  // .select('*')
+  // .eq('volunteer_id',1);
 
   return _response.json({
     'message': "welcome to the route",
-    data:data
+    // data:data
   });
 
 });
