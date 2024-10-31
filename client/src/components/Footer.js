@@ -18,6 +18,12 @@ const Footer = () => {
             Facebook
           </a>
         </div>
+        <div className="mt-4 text-sm text-gray-400">
+          <p>&copy; {new Date().getFullYear()} Akshar Paaul. All rights reserved.</p>
+          <p className="mt-2">
+            Created by Atharv Raje, Dhairya Mehra, Jay Gondaliya, Kushdeo Shukla and Rutu Bhanderi, SIT Pune
+          </p>
+        </div>
       </div>
     </footer>
   );
