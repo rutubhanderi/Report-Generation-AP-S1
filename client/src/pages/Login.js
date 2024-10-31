@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { LogIn, Shield, User, Users, ChevronDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../assets/loginbgap.png'; 
+import { LogIn, Shield, Users, ChevronDown } from 'lucide-react';
+import { useAuth } from '../components/AuthContext';
+import backgroundImage from '../assets/loginbgap.png';
 
 const Login = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
   const [role, setRole] = useState('admin');
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -29,24 +29,11 @@ const Login = () => {
       const isValid = credentials.email && credentials.password;
       
       if (isValid) {
-        // Store user info in localStorage or your preferred state management solution
-        localStorage.setItem('user', JSON.stringify({ 
+        // Call the login function from AuthContext
+        login({ 
           email: credentials.email, 
           role: role 
-        }));
-
-        // Redirect based on role
-        switch (role) {
-          case 'admin':
-            navigate('/admin');
-            break;
-          
-          case 'volunteer':
-            navigate('/volunteer');
-            break;
-          default:
-            navigate('/login');
-        }
+        });
       } else {
         setError('Invalid credentials. Please try again.');
       }
@@ -61,7 +48,6 @@ const Login = () => {
     switch (userRole) {
       case 'admin':
         return <Shield className="w-5 h-5" />;
-      
       case 'volunteer':
         return <Users className="w-5 h-5" />;
       default:
