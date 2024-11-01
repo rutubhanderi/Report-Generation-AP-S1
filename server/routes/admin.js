@@ -2,6 +2,38 @@ const express = require('express');
 const supabase = require('../db/db');
 const AdminRouter = express.Router();
 
+// Route to get the list of all volunteers
+AdminRouter.get('/volunteerlist', async (_request, _response) => {
+  try {
+    const { data, error } = await supabase.from('volunteer').select('*');
+
+    if (error) {
+      return _response.status(500).json({ error: error.message });
+    }
+
+    return _response.json({ data });
+
+  } catch (e) {
+    return _response.status(500).json({ error: e.message });
+  }
+});
+
+// Route to get a specific volunteer by ID
+AdminRouter.get('/volunteerlist/:id', async (_request, _response) => {
+  const { id } = _request.params;
+  try {
+    const { data, error } = await supabase.from('volunteer').select('*').eq('volunteer_id', id);
+
+    if (error) {
+      return _response.status(500).json({ error: error.message });
+    }
+    return _response.json({ data });
+  } catch (e) {
+    return _response.status(500).json({ error: e.message });
+  }
+});
+
+// Other admin routes (DELETE, GET, POST)
 AdminRouter.delete('/', async (_request, _response) => {
   const body = _request.body;
 
@@ -17,7 +49,6 @@ AdminRouter.delete('/', async (_request, _response) => {
     return _response.status(500).json({ error: e.message });
   }
 });
-
 
 AdminRouter.get('/', async (_request, _response) => {
   try {
@@ -72,31 +103,5 @@ AdminRouter.post('/', async (_request, _response) => {
     return _response.status(500).json({ error: e.message });
   }
 });
-
-// AdminRouter.get('/volunteerlist', async (_request, _response) => {
-//   try {
-//     const { data, error } = await supabase.from('volunteer').select('*');
-
-//     if (error) {
-//       return _response.status(500).json({ error: error.message });
-//     }
-
-//     return _response.json({ data });
-
-//   } catch (e) {
-//     return _response.status(500).json({ error: e.message });
-//   }
-// });
-
-// AdminRouter.get('/volunteerlist/:id', async (_request, _response) => {
-//   const { id } = _request.params;
-//   try {
-//     const { data, error } = await supabase.from('volunteer').select('*').eq('volunteer_id', id);
-//     if (error) return _response.status(500).json({ error: error.message });
-//     return _response.json({ data });
-//   } catch (e) {
-//     return _response.status(500).json({ error: e.message });
-//   }
-// });
 
 module.exports = AdminRouter;
