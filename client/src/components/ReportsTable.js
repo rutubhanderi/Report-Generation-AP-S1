@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Plus, Eye, Printer, Edit } from 'lucide-react';
 import CreateReport from './CreateReport';
 import ViewReport from './ViewReport';
@@ -7,61 +7,63 @@ import EditReport from './EditReport';
 const ReportsTable = () => {
   const [view, setView] = useState('table');
   const [selectedReport, setSelectedReport] = useState(null);
-  const [reports, setReports] = useState([
-    {
-      id: 1,
-      name: 'Q1 Financial Report',
-      status: 'Completed',
-      member: 'John Smith',
-      date: '2024-01-15',
-      tasksCompleted: '8',
-      tasksPending: '2',
-      hoursWorked: '40',
-      rating: '4',
-      comments: 'All major objectives were achieved ahead of schedule.'
-    },
-    {
-      id: 2,
-      name: 'Marketing Analysis',
-      status: 'In Progress',
-      member: 'Sarah Johnson',
-      date: '2024-02-01',
-      tasksCompleted: '5',
-      tasksPending: '3',
-      hoursWorked: '25',
-      rating: '3',
-      comments: 'Making steady progress on key deliverables.'
-    },
-    {
-      id: 3,
-      name: 'User Research Results',
-      status: 'Pending',
-      member: 'Mike Wilson',
-      date: '2024-02-15',
-      tasksCompleted: '2',
-      tasksPending: '6',
-      hoursWorked: '15',
-      rating: '3',
-      comments: 'Initial research phase completed, pending review.'
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  //For fetching reports from db - Starts here
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const fetchReports = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/volunteer');
+      if (!response.ok) {
+        throw new Error('Failed to fetch reports');
+      }
+      const { data } = await response.json();
+      // Transform the data to match the expected format
+      const transformedData = data.map(report => ({
+        id: report.report_id,
+        name: report.report_name,
+        status: report.report_status || 'Pending',
+        member: report.volunteer?.volunteer_name || 'Unassigned',
+        date: new Date().toISOString().split('T')[0], // Add default date if not provided
+        tasksCompleted: '0',
+        tasksPending: '0',
+        hoursWorked: '0',
+        comments: ''
+      }));
+      setReports(transformedData);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+//ends here
+  const handleAddReport = async (formData) => {
+    try {
+      // API call to create report would go here
+      const newReport = {
+        id: reports.length + 1,
+        name: formData.report_name,
+        status: 'Pending',
+        member: 'Member',
+        date: formData.report_date,
+        tasksCompleted: formData.tasks_completed,
+        tasksPending: formData.tasks_pending,
+        hoursWorked: formData.total_hours_worked,
+        
+        comments: formData.comments
+      };
 
-  const handleAddReport = (formData) => {
-    const newReport = {
-      id: reports.length + 1,
-      name: formData.report_name,
-      status: 'Pending',
-      member: 'Current User',
-      date: formData.report_date,
-      tasksCompleted: formData.tasks_completed,
-      tasksPending: formData.tasks_pending,
-      hoursWorked: formData.total_hours_worked,
-      rating: formData.performance_rating,
-      comments: formData.comments
-    };
-
-    setReports([...reports, newReport]);
-    setView('table');
+      setReports([...reports, newReport]);
+      setView('table');
+    } catch (err) {
+      console.error('Failed to create report:', err);
+    }
   };
 
   const handleViewReport = (reportId) => {
@@ -167,41 +169,43 @@ const ReportsTable = () => {
     }, 250);
   };
 
-  // Render different views based on state
-  if (view === 'create') {
-    return <CreateReport onBack={() => setView('table')} onSubmit={handleAddReport} />;
-  }
-
-  if (view === 'view' && selectedReport) {
-    return (
-      <ViewReport
-        report={selectedReport}
-        onBack={() => {
-          setView('table');
-          setSelectedReport(null);
-        }}
-        onPrint={() => handlePrintReport(selectedReport)}
-        isLoading={false}
-      />
-    );
-  }
-
   const handleEditReport = (reportId) => {
     const report = reports.find(r => r.id === reportId);
     setSelectedReport(report);
     setView('edit');
   };
 
-  const handleUpdateReport = (updatedReport) => {
-    const updatedReports = reports.map(report => {
-      if (report.id === updatedReport.id) {
-        return updatedReport;
-      }
-      return report;
-    });
-    setReports(updatedReports);
-    setView('table');
+  const handleUpdateReport = async (updatedReport) => {
+    try {
+      // API call to update report would go here
+      const updatedReports = reports.map(report => {
+        if (report.id === updatedReport.id) {
+          return updatedReport;
+        }
+        return report;
+      });
+      setReports(updatedReports);
+      setView('table');
+    } catch (err) {
+      console.error('Failed to update report:', err);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto p-8 text-center">
+        Loading reports...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full max-w-4xl mx-auto p-8 text-center text-red-600">
+        Error: {error}
+      </div>
+    );
+  }
 
   if (view === 'create') {
     return <CreateReport onBack={() => setView('table')} onSubmit={handleAddReport} />;
