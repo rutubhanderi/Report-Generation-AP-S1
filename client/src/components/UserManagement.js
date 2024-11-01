@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, UserPlus, Trash2, X } from 'lucide-react';
 import ViewUserDetails from './ViewUserDetails';
 
@@ -8,6 +8,10 @@ const UserManagement = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [users, setUsers] = useState({
+    admins: [],
+    volunteers: []
+  });
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
@@ -16,53 +20,48 @@ const UserManagement = () => {
     password: '',
     role: activeTab === 'admin' ? 'Admin' : 'Volunteer'
   });
-  
-  const [users, setUsers] = useState({
-    admins: [
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'john@example.com',
-        phone: '(555) 123-4567',
-        address: '123 Admin Street, Admin City, AC 12345',
-        password: 'admin123',
-        joinedDate: 'January 10, 2024',
-        role: 'Admin'
-      },
-      {
-        id: 2,
-        name: 'Jane Smith',
-        email: 'jane@example.com',
-        phone: '(555) 987-6543',
-        password: 'admin456',
-        address: '456 Admin Avenue, Admin City, AC 12345',
-        joinedDate: 'January 12, 2024',
-        role: 'Admin'
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch users when component mounts or tab changes
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const endpoint = activeTab === 'admin' ? 'http://localhost:3001/admin' : 'http://localhost:3001/admin/volunteerlist';
+        const response = await fetch(endpoint);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        
+        const result = await response.json();
+        
+        // Map backend data to frontend structure
+        const mappedUsers = result.data.map(user => ({
+          id: activeTab === 'admin' ? user.admin_id : user.volunteer_id,
+          name: activeTab === 'admin' ? user.admin_name : user.volunteer_name,
+          email: activeTab === 'admin' ? user.admin_email : user.volunteer_email,
+          phone: activeTab === 'admin' ? user.admin_phone : user.volunteer_phone,
+          address: activeTab === 'admin' ? user.admin_address : user.volunteer_address,
+          joinedDate: activeTab === 'admin' ? user.date_of_joining : user.date_of_joining,
+          role: activeTab === 'admin' ? 'Admin' : 'Volunteer'
+        }));
+
+        setUsers(prev => ({
+          ...prev,
+          [activeTab === 'admin' ? 'admins' : 'volunteers']: mappedUsers
+        }));
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    ],
-    volunteers: [
-      {
-        id: 3,
-        name: 'Sarah Johnson',
-        email: 'sarah.johnson@email.com',
-        phone: '(555) 123-4567',
-        password: 'volunteer123',
-        address: '123 Volunteer Street, Charity City, CC 12345',
-        joinedDate: 'January 15, 2024',
-        role: 'Volunteer'
-      },
-      {
-        id: 4,
-        name: 'Mike Wilson',
-        email: 'mike.wilson@email.com',
-        phone: '(555) 234-5678',
-        password: 'volunteer456',
-        address: '789 Volunteer Road, Charity City, CC 12345',
-        joinedDate: 'January 18, 2024',
-        role: 'Volunteer'
-      }
-    ]
-  });
+    };
+
+    fetchUsers();
+  }, [activeTab]);
 
   const handleView = (user) => {
     setSelectedUser(user);
@@ -73,51 +72,99 @@ const UserManagement = () => {
     setShowDeleteConfirm(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!userToDelete) return;
 
-    const userType = userToDelete.role.toLowerCase() === 'admin' ? 'admins' : 'volunteers';
-    
-    setUsers(prevUsers => ({
-      ...prevUsers,
-      [userType]: prevUsers[userType].filter(user => user.id !== userToDelete.id)
-    }));
+    try {
+      const endpoint = activeTab === 'admin' ? 'http://localhost:3001/admin' : 'http://localhost:3001/admin/volunteerlist';
+      const response = await fetch(endpoint, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          [activeTab === 'admin' ? 'admin_id' : 'volunteer_id']: userToDelete.id 
+        })
+      });
 
-    setShowDeleteConfirm(false);
-    setUserToDelete(null);
+      if (!response.ok) {
+        throw new Error('Failed to delete user');
+      }
+
+      // Update local state to remove deleted user
+      setUsers(prevUsers => ({
+        ...prevUsers,
+        [activeTab === 'admin' ? 'admins' : 'volunteers']: 
+          prevUsers[activeTab === 'admin' ? 'admins' : 'volunteers']
+            .filter(user => user.id !== userToDelete.id)
+      }));
+
+      setShowDeleteConfirm(false);
+      setUserToDelete(null);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  const handleAddUser = (e) => {
+  const handleAddUser = async (e) => {
     e.preventDefault();
     
-    const userType = activeTab === 'admin' ? 'admins' : 'volunteers';
-    const newId = Math.max(...users[userType].map(u => u.id), 0) + 1;
-    
-    const userToAdd = {
-      ...newUser,
-      id: newId,
-      joinedDate: new Date().toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      }),
-      role: activeTab === 'admin' ? 'Admin' : 'Volunteer'
-    };
+    try {
+      const userPayload = {
+        [activeTab === 'admin' ? 'admin_id' : 'volunteer_id']: null, // backend will generate
+        [activeTab === 'admin' ? 'admin_name' : 'volunteer_name']: newUser.name,
+        [activeTab === 'admin' ? 'admin_email' : 'volunteer_email']: newUser.email,
+        [activeTab === 'admin' ? 'admin_password' : 'volunteer_password']: newUser.password,
+        [activeTab === 'admin' ? 'admin_phone' : 'volunteer_phone']: newUser.phone,
+        [activeTab === 'admin' ? 'admin_address' : 'volunteer_address']: newUser.address,
+        date_of_joining: new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+      };
 
-    setUsers(prevUsers => ({
-      ...prevUsers,
-      [userType]: [...prevUsers[userType], userToAdd]
-    }));
+      const response = await fetch('http://localhost:3001/admin/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userPayload)
+      });
 
-    setNewUser({
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      password: '',
-      role: activeTab === 'admin' ? 'Admin' : 'Volunteer'
-    });
-    setShowAddForm(false);
+      if (!response.ok) {
+        throw new Error('Failed to add user');
+      }
+
+      const result = await response.json();
+      
+      // Update local state with new user
+      setUsers(prevUsers => ({
+        ...prevUsers,
+        [activeTab === 'admin' ? 'admins' : 'volunteers']: [
+          ...prevUsers[activeTab === 'admin' ? 'admins' : 'volunteers'],
+          {
+            ...newUser,
+            id: result.data[0][activeTab === 'admin' ? 'admin_id' : 'volunteer_id'],
+            joinedDate: userPayload.date_of_joining,
+            role: activeTab === 'admin' ? 'Admin' : 'Volunteer'
+          }
+        ]
+      }));
+
+      // Reset form
+      setNewUser({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        password: '',
+        role: activeTab === 'admin' ? 'Admin' : 'Volunteer'
+      });
+      setShowAddForm(false);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -128,6 +175,32 @@ const UserManagement = () => {
     }));
   };
 
+  // Render loading state
+  if (loading) {
+    return (
+      <div className="p-6 text-center">
+        <p>Loading users...</p>
+      </div>
+    );
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <div className="p-6 text-red-600">
+        <p>Error: {error}</p>
+        <button 
+          onClick={() => {
+            setError(null);
+            setLoading(true);
+          }} 
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="p-6">
       {selectedUser ? (

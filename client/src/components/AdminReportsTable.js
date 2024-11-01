@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FileText, Plus, Eye, Printer } from 'lucide-react';
+import { FileText, Eye, Printer } from 'lucide-react';
 import ViewReport from './ViewReport';
 
 const AdminReportsTable = () => {
@@ -44,23 +44,7 @@ const AdminReportsTable = () => {
     }
   ]);
 
-  const handleAddReport = (formData) => {
-    const newReport = {
-      id: reports.length + 1,
-      name: formData.report_name,
-      status: 'Pending',
-      member: 'Current User',
-      date: formData.report_date,
-      tasksCompleted: formData.tasks_completed,
-      tasksPending: formData.tasks_pending,
-      hoursWorked: formData.total_hours_worked,
-      rating: formData.performance_rating,
-      comments: formData.comments
-    };
-
-    setReports([...reports, newReport]);
-    setView('table');
-  };
+  
 
   const handleViewReport = (reportId) => {
     const report = reports.find(r => r.id === reportId);
