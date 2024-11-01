@@ -87,7 +87,7 @@ AdminRouter.post('/', async (_request, _response) => {
       admin_password: body.admin_password,
       admin_phone: body.admin_phone,
       admin_address: body.admin_address,
-      admin_date_of_joining: body.admin_date_of_joining
+      date_of_joining: body.admin_date_of_joining
     });
 
     if (error) {
