@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser')
 const supabase = require('./db/db');
 
-// const AdminRouter = require('./routes/admin.js');
+const AdminRouter = require('./routes/admin.js');
 const VolunteerRouter = require('./routes/volunteer.js');
 
 const app = express();
@@ -27,8 +27,9 @@ app.get('/', async (_request, _response) => {
 
 });
 
-// app.use('/admin', AdminRouter);
+app.use('/admin', AdminRouter);
 app.use('/volunteer', VolunteerRouter);
+// app.use('/admin/volunteerlist', AdminRouter);
 
 app.listen(PORT, ()=> {
   console.log(`listening at port ${PORT}`);
