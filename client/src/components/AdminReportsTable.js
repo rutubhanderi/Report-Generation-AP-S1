@@ -75,54 +75,120 @@ const AdminReportsTable = () => {
       <!DOCTYPE html>
       <html>
         <head>
-          <title>${report.name} - Report</title>
+          <title>Report - ${report.name}</title>
           <style>
-            body { font-family: Arial; padding: 40px; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .section { margin-bottom: 20px; }
-            .label { font-weight: bold; }
-            .progress-bar { 
-              width: 200px; 
-              height: 20px; 
-              background: #eee; 
-              margin: 10px 0;
+            body {
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+              padding: 40px;
+              max-width: 800px;
+              margin: 0 auto;
             }
-            .progress-fill {
-              height: 100%;
-              background: #2563eb;
+            .header {
+              text-align: center;
+              margin-bottom: 30px;
+              border-bottom: 2px solid #2563eb;
+              padding-bottom: 20px;
+            }
+            .section {
+              margin-bottom: 20px;
+              display: flex;
+              align-items: baseline;
+            }
+            .label {
+              font-weight: bold;
+              margin-right: 10px;
+              min-width: 150px;
+              color: #1e40af;
+            }
+            .value {
+              flex: 1;
+            }
+            .divider {
+              border-top: 1px solid #e5e7eb;
+              margin: 20px 0;
+            }
+            .status-badge {
+              display: inline-block;
+              padding: 4px 12px;
+              border-radius: 9999px;
+              background-color: ${
+                report.status === "Completed" ? "#bbf7d0" : "#fef3c7"
+              };
+              color: ${report.status === "Completed" ? "#166534" : "#92400e"};
+              font-weight: 500;
+            }
+            @media print {
+              @page {
+                margin: 2cm;
+              }
+              .header {
+                border-bottom-color: #000;
+              }
+              .status-badge {
+                border: 1px solid ${
+                  report.status === "Completed" ? "#166534" : "#92400e"
+                };
+              }
             }
           </style>
         </head>
         <body>
           <div class="header">
-            <h1>${report.name}</h1>
-            <p>Report ID: ${report.id}</p>
+            <h1>Volunteer Activity Report</h1>
+            <p>Date: ${new Date(report.date).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}</p>
           </div>
+          
           <div class="section">
-            <span class="label">Date:</span> ${report.date}
+            <span class="label">Report Name:</span>
+            <span class="value">${report.name}</span>
           </div>
+
           <div class="section">
-            <span class="label">Status:</span> ${report.status}
+            <span class="label">Status:</span>
+            <span class="value">
+              <span class="status-badge">${report.status}</span>
+            </span>
           </div>
+
+          <div class="divider"></div>
+
           <div class="section">
-            <span class="label">Description:</span> ${report.description}
+            <span class="label">Tasks Completed:</span>
+            <span class="value">${report.tasksCompleted}</span>
           </div>
+
           <div class="section">
-            <span class="label">Tasks Progress:</span>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width: ${getProgressPercentage(report.tasksCompleted, report.tasksPending)}%"></div>
-            </div>
-            <p>Completed: ${report.tasksCompleted} | Pending: ${report.tasksPending}</p>
+            <span class="label">Tasks Pending:</span>
+            <span class="value">${report.tasksPending}</span>
           </div>
+
           <div class="section">
-            <span class="label">Total Hours:</span> ${report.totalHours}
+            <span class="label">Hours Worked:</span>
+            <span class="value">${report.totalHours}</span>
           </div>
+
+          <div class="divider"></div>
+
           <div class="section">
-            <span class="label">Comments:</span> ${report.comments}
+            <span class="label">Description:</span>
+            <span class="value">${report.description}</span>
           </div>
-          <footer style="margin-top: 40px; font-size: 12px; color: #666;">
-            <p>Generated on: ${new Date().toLocaleString()}</p>
-          </footer>
+
+          ${
+            report.comments
+              ? `
+          <div class="section">
+            <span class="label">Comments:</span>
+            <span class="value">${report.comments}</span>
+          </div>
+          `
+              : ""
+          }
         </body>
       </html>
     `);
