@@ -30,10 +30,9 @@ const UserManagement = () => {
       setLoading(true);
       setError(null);
       try {
-        const endpoint =
-          activeTab === "admin"
-            ? "http://localhost:3001/admin"
-            : "http://localhost:3001/admin/volunteerlist";
+        const endpoint = activeTab === "admin" 
+          ? "http://localhost:3001/admin"  // Updated to match backend route
+          : "http://localhost:3001/admin/volunteerlist";
         const response = await fetch(endpoint);
 
         if (!response.ok) {
@@ -46,14 +45,10 @@ const UserManagement = () => {
         const mappedUsers = result.data.map((user) => ({
           id: activeTab === "admin" ? user.admin_id : user.volunteer_id,
           name: activeTab === "admin" ? user.admin_name : user.volunteer_name,
-          email:
-            activeTab === "admin" ? user.admin_email : user.volunteer_email,
-          phone:
-            activeTab === "admin" ? user.admin_phone : user.volunteer_phone,
-          address:
-            activeTab === "admin" ? user.admin_address : user.volunteer_address,
-          joinedDate:
-            activeTab === "admin" ? user.date_of_joining : user.date_of_joining,
+          email: activeTab === "admin" ? user.admin_email : user.volunteer_email,
+          phone: activeTab === "admin" ? user.admin_phone : user.volunteer_phone,
+          address: activeTab === "admin" ? user.admin_address : user.volunteer_address,
+          joinedDate: user.date_of_joining,
           role: activeTab === "admin" ? "Admin" : "Volunteer",
         }));
 
@@ -71,8 +66,28 @@ const UserManagement = () => {
     fetchUsers();
   }, [activeTab]);
 
-  const handleView = (user) => {
-    setSelectedUser(user);
+  const handleView = async (user) => {
+    try {
+      const endpoint = activeTab === "admin"
+        ? `http://localhost:3001/admin/${user.id}`  // Updated to match GET /:id route
+        : `http://localhost:3001/admin/volunteerlist/${user.id}`;
+      
+      const response = await fetch(endpoint);
+      if (!response.ok) {
+        throw new Error("Failed to fetch user details");
+      }
+
+      const result = await response.json();
+      const userData = result.data[0]; // Get first item since it returns an array
+      
+      setSelectedUser({
+        ...user,
+        // Add any additional details from the specific user fetch
+        fullDetails: userData
+      });
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleDeleteClick = (user) => {
@@ -84,18 +99,17 @@ const UserManagement = () => {
     if (!userToDelete) return;
 
     try {
-      const endpoint =
-        activeTab === "admin"
-          ? "http://localhost:3001/admin"
-          : "http://localhost:3001/admin/volunteerlist";
+      const endpoint = activeTab === "admin"
+        ? "http://localhost:3001/admin"  // Updated to match DELETE route
+        : "http://localhost:3001/admin/volunteerlist";
+      
       const response = await fetch(endpoint, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          [activeTab === "admin" ? "admin_id" : "volunteer_id"]:
-            userToDelete.id,
+          [activeTab === "admin" ? "admin_id" : "volunteer_id"]: userToDelete.id,
         }),
       });
 
@@ -122,19 +136,17 @@ const UserManagement = () => {
     e.preventDefault();
 
     try {
+      const endpoint = activeTab === "admin"
+        ? "http://localhost:3001/admin"  // Updated to match POST route
+        : "http://localhost:3001/admin/volunteerlist";
+
       const userPayload = {
-        [activeTab === "admin" ? "admin_id" : "volunteer_id"]: parseInt(
-          newUser.id
-        ),
+        [activeTab === "admin" ? "admin_id" : "volunteer_id"]: parseInt(newUser.id),
         [activeTab === "admin" ? "admin_name" : "volunteer_name"]: newUser.name,
-        [activeTab === "admin" ? "admin_email" : "volunteer_email"]:
-          newUser.email,
-        [activeTab === "admin" ? "admin_password" : "volunteer_password"]:
-          newUser.password,
-        [activeTab === "admin" ? "admin_phone" : "volunteer_phone"]:
-          newUser.phone,
-        [activeTab === "admin" ? "admin_address" : "volunteer_address"]:
-          newUser.address,
+        [activeTab === "admin" ? "admin_email" : "volunteer_email"]: newUser.email,
+        [activeTab === "admin" ? "admin_password" : "volunteer_password"]: newUser.password,
+        [activeTab === "admin" ? "admin_phone" : "volunteer_phone"]: newUser.phone,
+        [activeTab === "admin" ? "admin_address" : "volunteer_address"]: newUser.address,
         date_of_joining: new Date().toLocaleDateString("en-US", {
           year: "numeric",
           month: "long",
@@ -142,7 +154,7 @@ const UserManagement = () => {
         }),
       };
 
-      const response = await fetch("http://localhost:3001/admin/", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -162,8 +174,11 @@ const UserManagement = () => {
         [activeTab === "admin" ? "admins" : "volunteers"]: [
           ...prevUsers[activeTab === "admin" ? "admins" : "volunteers"],
           {
-            ...newUser,
             id: parseInt(newUser.id),
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+            address: newUser.address,
             joinedDate: userPayload.date_of_joining,
             role: activeTab === "admin" ? "Admin" : "Volunteer",
           },
@@ -172,7 +187,7 @@ const UserManagement = () => {
 
       // Reset form
       setNewUser({
-        id:"",
+        id: "",
         name: "",
         email: "",
         phone: "",

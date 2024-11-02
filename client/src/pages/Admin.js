@@ -30,9 +30,9 @@ const AdminDashboard = () => {
       case 'reports':
         return <AdminReportsTable />;
       case 'profile':
-        return <Profile />;
+        return <Profile adminId={1} />;
       default:
-        return <Profile />; // Changed default to Profile
+        return <Profile adminId={1}/>; // Changed default to Profile
     }
   };
 

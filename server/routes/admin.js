@@ -2,28 +2,30 @@ const express = require('express');
 const supabase = require('../db/db');
 const AdminRouter = express.Router();
 
-// Route to get the list of all volunteers
+// Get all volunteers
 AdminRouter.get('/volunteerlist', async (_request, _response) => {
   try {
     const { data, error } = await supabase.from('volunteer').select('*');
-
+    
     if (error) {
       return _response.status(500).json({ error: error.message });
     }
-
+    
     return _response.json({ data });
-
   } catch (e) {
     return _response.status(500).json({ error: e.message });
   }
 });
 
-// Route to get a specific volunteer by ID
+// Get specific volunteer
 AdminRouter.get('/volunteerlist/:id', async (_request, _response) => {
   const { id } = _request.params;
   try {
-    const { data, error } = await supabase.from('volunteer').select('*').eq('volunteer_id', id);
-
+    const { data, error } = await supabase
+      .from('volunteer')
+      .select('*')
+      .eq('volunteer_id', id);
+    
     if (error) {
       return _response.status(500).json({ error: error.message });
     }
@@ -33,42 +35,98 @@ AdminRouter.get('/volunteerlist/:id', async (_request, _response) => {
   }
 });
 
-// Other admin routes (DELETE, GET, POST)
-AdminRouter.delete('/', async (_request, _response) => {
+// Delete volunteer
+AdminRouter.delete('/volunteerlist', async (_request, _response) => {
   const body = _request.body;
-
+  
   try {
-    const { error } = await supabase.from('admin').delete().match({ admin_id: body.admin_id });
-
+    const { error } = await supabase
+      .from('volunteer')
+      .delete()
+      .match({ volunteer_id: body.volunteer_id });
+    
     if (error) {
       return _response.status(500).json({ error: error.message });
     }
-
-    return _response.json({ message: "data deleted successfully" });
+    
+    return _response.json({ message: "Volunteer deleted successfully" });
   } catch (e) {
     return _response.status(500).json({ error: e.message });
   }
 });
 
+// Add new volunteer
+AdminRouter.post('/volunteerlist', async (_request, _response) => {
+  const body = _request.body;
+  
+  try {
+    const { data, error } = await supabase.from('volunteer').insert({
+      volunteer_id: body.volunteer_id,
+      volunteer_name: body.volunteer_name,
+      volunteer_email: body.volunteer_email,
+      volunteer_password: body.volunteer_password,
+      volunteer_phone: body.volunteer_phone,
+      volunteer_address: body.volunteer_address,
+      date_of_joining: body.date_of_joining
+    });
+    
+    if (error) {
+      return _response.status(500).json({ error: error.message });
+    }
+    
+    return _response.json({
+      message: "Volunteer added successfully",
+      data
+    });
+  } catch (e) {
+    return _response.status(500).json({ error: e.message });
+  }
+});
+
+// Delete admin
+AdminRouter.delete('/', async (_request, _response) => {
+  const body = _request.body;
+  
+  try {
+    const { error } = await supabase
+      .from('admin')
+      .delete()
+      .match({ admin_id: body.admin_id });
+    
+    if (error) {
+      return _response.status(500).json({ error: error.message });
+    }
+    
+    return _response.json({ message: "Admin deleted successfully" });
+  } catch (e) {
+    return _response.status(500).json({ error: e.message });
+  }
+});
+
+// Get all admins
 AdminRouter.get('/', async (_request, _response) => {
   try {
     const { data, error } = await supabase.from('admin').select('*');
-
+    
     if (error) {
       return _response.status(500).json({ error: error.message });
     }
-
+    
     return _response.json({ data });
-
   } catch (e) {
     return _response.status(500).json({ error: e.message });
   }
 });
 
+// Get specific admin
 AdminRouter.get('/:id', async (_request, _response) => {
   const { id } = _request.params;
   try {
-    const { data, error } = await supabase.from('admin').select('*').eq('admin_id', id);
+    const { data, error } = await supabase
+      .from('admin')
+      .select('*')
+      .eq('admin_id', id);
+    
     if (error) return _response.status(500).json({ error: error.message });
     return _response.json({ data });
   } catch (e) {
@@ -76,9 +134,10 @@ AdminRouter.get('/:id', async (_request, _response) => {
   }
 });
 
+// Add new admin
 AdminRouter.post('/', async (_request, _response) => {
   const body = _request.body;
-
+  
   try {
     const { data, error } = await supabase.from('admin').insert({
       admin_id: body.admin_id,
@@ -87,18 +146,17 @@ AdminRouter.post('/', async (_request, _response) => {
       admin_password: body.admin_password,
       admin_phone: body.admin_phone,
       admin_address: body.admin_address,
-      date_of_joining: body.admin_date_of_joining
+      date_of_joining: body.date_of_joining
     });
-
+    
     if (error) {
       return _response.status(500).json({ error: error.message });
     }
-
+    
     return _response.json({
-      message: "data inserted successfully",
+      message: "Admin added successfully",
       data
     });
-
   } catch (e) {
     return _response.status(500).json({ error: e.message });
   }

@@ -11,7 +11,6 @@ const ReportsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  //For fetching reports from db - Starts here
   useEffect(() => {
     fetchReports();
   }, []);
@@ -19,22 +18,23 @@ const ReportsTable = () => {
   const fetchReports = async () => {
     try {
       const response = await fetch('http://localhost:3001/volunteer');
+      
       if (!response.ok) {
         throw new Error('Failed to fetch reports');
       }
+      
       const { data } = await response.json();
-      // Transform the data to match the expected format
       const transformedData = data.map(report => ({
         id: report.report_id,
         name: report.report_name,
         status: report.report_status || 'Pending',
-        member: report.volunteer?.volunteer_name || 'Unassigned',
-        date: new Date().toISOString().split('T')[0], // Add default date if not provided
+        date: new Date().toISOString().split('T')[0],
         tasksCompleted: '0',
         tasksPending: '0',
         hoursWorked: '0',
         comments: ''
       }));
+      
       setReports(transformedData);
     } catch (err) {
       setError(err.message);
@@ -42,20 +42,18 @@ const ReportsTable = () => {
       setLoading(false);
     }
   };
-//ends here
+
   const handleAddReport = async (formData) => {
     try {
-      // API call to create report would go here
       const newReport = {
         id: reports.length + 1,
         name: formData.report_name,
         status: 'Pending',
-        member: 'Member',
+        
         date: formData.report_date,
         tasksCompleted: formData.tasks_completed,
         tasksPending: formData.tasks_pending,
         hoursWorked: formData.total_hours_worked,
-        
         comments: formData.comments
       };
 
@@ -73,11 +71,13 @@ const ReportsTable = () => {
   };
 
   const handlePrintReport = (report) => {
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open('', '_blank');
+    
     if (!printWindow) {
-      alert("Please allow pop-ups to print the report");
+      alert('Please allow pop-ups to print the report');
       return;
-    }    
+    }
+    
     printWindow.document.write(`
       <!DOCTYPE html>
       <html>
@@ -129,11 +129,6 @@ const ReportsTable = () => {
             ${report.status}
           </div>
 
-          <div class="section">
-            <span class="label">Member Assigned:</span>
-            ${report.member}
-          </div>
-
           <div class="divider"></div>
 
           <div class="section">
@@ -177,13 +172,9 @@ const ReportsTable = () => {
 
   const handleUpdateReport = async (updatedReport) => {
     try {
-      // API call to update report would go here
-      const updatedReports = reports.map(report => {
-        if (report.id === updatedReport.id) {
-          return updatedReport;
-        }
-        return report;
-      });
+      const updatedReports = reports.map(report => 
+        report.id === updatedReport.id ? updatedReport : report
+      );
       setReports(updatedReports);
       setView('table');
     } catch (err) {
@@ -240,7 +231,6 @@ const ReportsTable = () => {
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-      {/* Header with Create Button */}
       <div className="bg-blue-600 text-white p-4 rounded-t-lg">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold flex items-center gap-2">
@@ -257,7 +247,6 @@ const ReportsTable = () => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
@@ -270,9 +259,6 @@ const ReportsTable = () => {
               </th>
               <th className="py-3 px-4 text-left font-semibold text-blue-800 border-b border-blue-100">
                 STATUS
-              </th>
-              <th className="py-3 px-4 text-left font-semibold text-blue-800 border-b border-blue-100">
-                MEMBER ASSIGNED
               </th>
               <th className="py-3 px-4 text-left font-semibold text-blue-800 border-b border-blue-100">
                 ACTIONS
@@ -296,7 +282,6 @@ const ReportsTable = () => {
                     {report.status}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-blue-900">{report.member}</td>
                 <td className="py-3 px-4 flex gap-2">
                   <button
                     onClick={() => handleViewReport(report.id)}
