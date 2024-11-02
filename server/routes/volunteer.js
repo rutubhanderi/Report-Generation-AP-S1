@@ -2,6 +2,27 @@ const express = require('express');
 const supabase = require('../db/db');
 const VolunteerRouter = express.Router();
 
+// Get volunteer data by ID
+VolunteerRouter.get('/volunteer/:volunteer_id', async (_request, _response) => {
+    try {
+        const { volunteer_id } = _request.params;
+        
+        const { data, error } = await supabase
+            .from('volunteer')
+            .select('*')
+            .eq('volunteer_id', volunteer_id)
+            .single();
+        
+        if (error) {
+            return _response.status(404).json({ error: 'Volunteer not found' });
+        }
+        
+        return _response.json({ data });
+    } catch (error) {
+        return _response.status(500).json({ error: error.message });
+    }
+});
+
 // Get all reports
 VolunteerRouter.get('/', async (_request, _response) => {
     try {
@@ -9,11 +30,11 @@ VolunteerRouter.get('/', async (_request, _response) => {
             .from('report')
             .select('*')
             .order('report_id', { ascending: true });
-
+        
         if (error) {
             return _response.status(500).json({ error: error.message });
         }
-
+        
         return _response.json({ data });
     } catch (error) {
         return _response.status(500).json({ error: error.message });
@@ -24,17 +45,17 @@ VolunteerRouter.get('/', async (_request, _response) => {
 VolunteerRouter.get('/:report_id', async (_request, _response) => {
     try {
         const { report_id } = _request.params;
-
+        
         const { data, error } = await supabase
             .from('report')
             .select('*')
             .eq('report_id', report_id)
             .single();
-
+        
         if (error) {
             return _response.status(404).json({ error: 'Report not found' });
         }
-
+        
         return _response.json({ data });
     } catch (error) {
         return _response.status(500).json({ error: error.message });
@@ -57,11 +78,11 @@ VolunteerRouter.post('/', async (_request, _response) => {
             report_status,
             admin_id
         } = _request.body;
-
+        
         const { data, error } = await supabase
             .from('report')
             .insert([
-                { 
+                {
                     report_id,
                     report_name,
                     task_completed,
@@ -76,14 +97,14 @@ VolunteerRouter.post('/', async (_request, _response) => {
                 }
             ])
             .select();
-
+        
         if (error) {
             return _response.status(400).json({ error: error.message });
         }
-
-        return _response.status(201).json({ 
+        
+        return _response.status(201).json({
             message: 'Report created successfully',
-            data 
+            data
         });
     } catch (error) {
         return _response.status(500).json({ error: error.message });
@@ -95,21 +116,21 @@ VolunteerRouter.put('/:report_id', async (_request, _response) => {
     try {
         const { report_id } = _request.params;
         const updateData = _request.body;
-
+        
         const { data, error } = await supabase
             .from('report')
             .update(updateData)
             .eq('report_id', report_id)
             .select();
-
+        
         if (error) {
             return _response.status(400).json({ error: error.message });
         }
-
+        
         if (!data || data.length === 0) {
             return _response.status(404).json({ error: 'Report not found' });
         }
-
+        
         return _response.json({
             message: 'Report updated successfully',
             data

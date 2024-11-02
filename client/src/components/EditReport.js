@@ -8,9 +8,6 @@ import {
   Save,
   FileText,
   AlignLeft,
-  Plus,
-  X,
-  ListTodo,
 } from "lucide-react";
 
 const EditReport = ({ report, onBack, onUpdate }) => {
@@ -23,21 +20,28 @@ const EditReport = ({ report, onBack, onUpdate }) => {
     tasks_pending: report.tasks_pending || "",
     total_hours_worked: report.total_hours_worked || "",
     comments: report.comments || "",
-    tasks: report.tasks || [],
   });
 
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [newTask, setNewTask] = useState("");
   const [isSaved, setIsSaved] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await onUpdate(formData);
+      await onUpdate({
+        id: formData.id,
+        report_name: formData.report_name,
+        description: formData.description,
+        report_date: formData.report_date,
+        tasks_completed: formData.tasks_completed,
+        tasks_pending: formData.tasks_pending,
+        total_hours_worked: formData.total_hours_worked,
+        comments: formData.comments,
+      });
       setIsSaved(true);
     } catch (error) {
       console.error("Error saving report:", error);
       setIsSaved(false);
+      alert('Failed to save report: ' + error.message);
     }
   };
 
@@ -48,85 +52,6 @@ const EditReport = ({ report, onBack, onUpdate }) => {
     });
     setIsSaved(false);
   };
-
-  const handleAddTask = (e) => {
-    e.preventDefault();
-    if (!newTask.trim()) return;
-
-    setFormData((prev) => ({
-      ...prev,
-      tasks: [...prev.tasks, newTask.trim()],
-      tasks_pending: prev.tasks_pending
-        ? String(parseInt(prev.tasks_pending) + 1)
-        : "1",
-    }));
-
-    setNewTask("");
-    setShowTaskModal(false);
-    setIsSaved(false);
-  };
-
-  const handleRemoveTask = (indexToRemove) => {
-    setFormData((prev) => ({
-      ...prev,
-      tasks: prev.tasks.filter((_, index) => index !== indexToRemove),
-      tasks_pending: String(
-        Math.max(0, parseInt(prev.tasks_pending || "0") - 1)
-      ),
-    }));
-    setIsSaved(false);
-  };
-
-  const TaskModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 shadow-xl">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">Add New Task</h3>
-          <button
-            type="button"
-            onClick={() => {
-              setShowTaskModal(false);
-              setNewTask("");
-            }}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <form onSubmit={handleAddTask} className="space-y-4">
-          <input
-            type="text"
-            value={newTask}
-            onChange={(e) => setNewTask(e.target.value)}
-            placeholder="Enter task name"
-            className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            autoFocus
-          />
-
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setShowTaskModal(false);
-                setNewTask("");
-              }}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={!newTask.trim()}
-            >
-              Add Task
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -193,46 +118,6 @@ const EditReport = ({ report, onBack, onUpdate }) => {
                 required
               />
             </label>
-          </div>
-
-          {/* Tasks Section */}
-          <div className="mb-6">
-            <div className="flex justify-between items-center mb-2">
-              <label className="flex items-center text-gray-700 font-medium">
-                <ListTodo size={18} className="mr-2 text-blue-600" />
-                Tasks
-              </label>
-              <button
-                type="button"
-                onClick={() => setShowTaskModal(true)}
-                className="flex items-center px-3 py-1 text-sm bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors"
-              >
-                <Plus size={16} className="mr-1" />
-                Add Task
-              </button>
-            </div>
-
-            {formData.tasks.length > 0 ? (
-              <div className="space-y-2 mb-4">
-                {formData.tasks.map((task, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-2 bg-gray-50 rounded"
-                  >
-                    <span className="text-gray-700">{task}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveTask(index)}
-                      className="text-gray-400 hover:text-red-500 transition-colors"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 text-sm mb-4">No tasks added yet</p>
-            )}
           </div>
 
           {/* Tasks Completed */}
@@ -317,8 +202,6 @@ const EditReport = ({ report, onBack, onUpdate }) => {
           </div>
         </form>
       </div>
-
-      {showTaskModal && <TaskModal />}
     </div>
   );
 };
