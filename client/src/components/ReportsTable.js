@@ -11,13 +11,15 @@ const ReportsTable = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const API_BASE_URL = 'http://localhost:3001/volunteer';
+
   useEffect(() => {
     fetchReports();
   }, []);
 
   const fetchReports = async () => {
     try {
-      const response = await fetch('http://localhost:3001/volunteer');
+      const response = await fetch(API_BASE_URL);
       
       if (!response.ok) {
         throw new Error('Failed to fetch reports');
@@ -28,11 +30,14 @@ const ReportsTable = () => {
         id: report.report_id,
         name: report.report_name,
         status: report.report_status || 'Pending',
-        date: new Date().toISOString().split('T')[0],
-        tasksCompleted: '0',
-        tasksPending: '0',
-        hoursWorked: '0',
-        comments: ''
+        date: report.date || new Date().toISOString().split('T')[0],
+        tasksCompleted: report.task_completed || '0',
+        tasksPending: report.task_pending || '0',
+        hoursWorked: report.total_hours || '0',
+        comments: report.report_comments || '',
+        description: report.report_description || '',
+        volunteerId: report.volunteer_id,
+        adminId: report.admin_id
       }));
       
       setReports(transformedData);
@@ -45,24 +50,52 @@ const ReportsTable = () => {
 
   const handleAddReport = async (formData) => {
     try {
-      const newReport = {
-        id: reports.length + 1,
-        name: formData.report_name,
-        status: 'Pending',
-        
-        date: formData.report_date,
-        tasksCompleted: formData.tasks_completed,
-        tasksPending: formData.tasks_pending,
-        hoursWorked: formData.total_hours_worked,
-        comments: formData.comments
-      };
+      const response = await fetch(API_BASE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          report_id: reports.length + 1,
+          report_name: formData.report_name,
+          task_completed: formData.tasks_completed,
+          task_pending: formData.tasks_pending,
+          total_hours: formData.total_hours_worked,
+          date: formData.report_date,
+          volunteer_id: formData.volunteer_id || 1, // Default value if not provided
+          report_description: formData.description || '',
+          report_comments: formData.comments,
+          report_status: 'Pending',
+          admin_id: formData.admin_id || 1 // Default value if not provided
+        }),
+      });
 
-      setReports([...reports, newReport]);
+      if (!response.ok) {
+        throw new Error('Failed to create report');
+      }
+
+      const { data } = await response.json();
+      setReports([...reports, {
+        id: data[0].report_id,
+        name: data[0].report_name,
+        status: data[0].report_status,
+        date: data[0].date,
+        tasksCompleted: data[0].task_completed,
+        tasksPending: data[0].task_pending,
+        hoursWorked: data[0].total_hours,
+        comments: data[0].report_comments,
+        description: data[0].report_description,
+        volunteerId: data[0].volunteer_id,
+        adminId: data[0].admin_id
+      }]);
       setView('table');
     } catch (err) {
       console.error('Failed to create report:', err);
+      setError(err.message);
     }
   };
+
+ 
 
   const handleViewReport = (reportId) => {
     const report = reports.find(r => r.id === reportId);

@@ -11,8 +11,8 @@ import {
 } from 'lucide-react';
 
 
-const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+const ViewReport = ({ report, onBack, isLoading }) => {
+  
 
   if (isLoading) {
     return (
@@ -22,10 +22,7 @@ const ViewReport = ({ report, onBack, onEdit, isLoading }) => {
     );
   }
 
-  const handleSave = (updatedReport) => {
-    onEdit(updatedReport);
-    setIsEditModalOpen(false);
-  };
+  
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
