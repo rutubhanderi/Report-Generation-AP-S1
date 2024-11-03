@@ -70,7 +70,7 @@ A full-stack report generation application that allows users to manage and view 
 
 - **Frontend**:React, Tailwind CSS for styling, and Axios for API requests.
 - **Backend**:Node.js with Express for API routing and handling server-side logic.
-- **Database**:Supabase for database management and real-time data sync.
+- **Database**:PostgreSQL for database and Supabase for database management and real-time data sync.
 
 ## Database
 
@@ -78,8 +78,8 @@ A full-stack report generation application that allows users to manage and view 
 
 - Go to [supabase.com](https://supabase.com/)
 - Fill in the following details in the "Create a new project" section:
-    - Organization: Choose the organization for the project ("Dhairya-A-Mehra").
-    - Project Name: Enter a project name ("Akshar Paaul NGO Database").
+    - Organization: Choose the organization for the project ("eg. Akshar Paaul").
+    - Project Name: Enter a project name ("eg. Akshar Paaul NGO Database").
     - Database Password: Set a secure password for the database or use the "Generate a password" option.
     - Region: Choose the region closest to your users for optimal performance ("South Asia (Mumbai)").
       
