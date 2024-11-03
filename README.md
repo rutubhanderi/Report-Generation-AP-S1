@@ -53,6 +53,25 @@ A full-stack report generation application that allows users to manage and view 
      npm start
      ```
    - The application should now be running, with the frontend typically accessible at http://localhost:3000 and the backend at http://localhost:5000 (or as specified in your configuration).
+  
+## Usage 
+
+-**Admin Login**: Log in using the admin credentials set in the admin_table_insertion.sql script. The admin dashboard will allow access to all report and user management features.
+-**Creating Reports**:On the dashboard, you can create new reports, edit existing ones, and assign tasks to volunteers.
+-**Volunteer Tasks**:Volunteers can log in, view assigned tasks, and update the status of their tasks.
+
+## Project Structure
+
+-**client/**:Contains the React frontend application, including components for user interfaces like report tables, forms, and dashboards.
+-**server/**:Node.js backend, including routes, models, and controllers for handling report and user-related data.
+-**database/**:SQL scripts to create the required tables and populate them with sample data.
+
+## Tech Stack
+
+-**Frontend**:React, Tailwind CSS for styling, and Axios for API requests.
+-**Backend**:Node.js with Express for API routing and handling server-side logic.
+-**Database**:Supabase for database management and real-time data sync.
+- **Additional Language**: VB.NET for specific backend components or business logic (if applicable).
 
 
 
