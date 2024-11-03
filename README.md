@@ -76,7 +76,7 @@ A full-stack report generation application that allows users to manage and view 
 
 **Setting up Supabase**
 
-- Go to [supabase.com](supabase.com)
+- Go to [supabase.com](https://supabase.com/)
 - Fill in the following details in the "Create a new project" section:
     - Organization: Choose the organization for the project ("Dhairya-A-Mehra").
     - Project Name: Enter a project name ("Akshar Paaul NGO Database").
