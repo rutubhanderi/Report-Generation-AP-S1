@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LogIn, Shield, Users, ChevronDown } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
+import supabase from '../lib/supabaseClient';
 import backgroundImage from '../assets/loginbgap.png';
 
 const Login = () => {
@@ -17,6 +18,57 @@ const Login = () => {
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
+    setError('');
+  };
+
+  // Function to fetch user data from appropriate table
+  const fetchUserData = async () => {
+    try {
+      let { data, error } = await supabase
+        .from(role)
+        .select('*')
+        .eq(role === 'admin' ? 'admin_email' : 'volunteer_email', credentials.email)
+        .single();
+
+      if (error) {
+        console.error('Fetch error:', error);
+        throw new Error('User not found');
+      }
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Function to verify user credentials
+  const verifyCredentials = (userData) => {
+    const storedPassword = role === 'admin' ? userData.admin_password : userData.volunteer_password;
+    return storedPassword === credentials.password;
+  };
+
+  // Function to create session
+  const createSession = async (userData) => {
+    try {
+      // Create a custom session object
+      const sessionData = {
+        user: {
+          id: userData.id,
+          email: role === 'admin' ? userData.admin_email : userData.volunteer_email,
+          role: role,
+          // Add any other relevant user data
+        },
+        role: role,
+        timestamp: new Date().toISOString()
+      };
+
+      // Store session in localStorage
+      localStorage.setItem('userSession', JSON.stringify(sessionData));
+
+      return sessionData;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -25,20 +77,31 @@ const Login = () => {
     setError('');
 
     try {
-      // Replace this with your actual authentication logic
-      const isValid = credentials.email && credentials.password;
-      
-      if (isValid) {
-        // Call the login function from AuthContext
-        login({ 
-          email: credentials.email, 
-          role: role 
-        });
-      } else {
-        setError('Invalid credentials. Please try again.');
+      // Step 1: Fetch user data
+      const userData = await fetchUserData();
+      console.log('User data:', userData);
+
+      // Step 2: Verify credentials
+      const isValidCredentials = verifyCredentials(userData);
+      if (!isValidCredentials) {
+        throw new Error('Invalid password');
       }
+
+      // Step 3: Create session
+      const sessionData = await createSession(userData);
+
+      // Step 4: Call login function from AuthContext
+      login({
+        user: sessionData.user,
+        role: sessionData.role,
+        session: sessionData
+      });
+
+      console.log('Login successful:', sessionData);
+
     } catch (err) {
-      setError('An error occurred during login. Please try again.');
+      console.error('Login error:', err);
+      setError(err.message || 'An error occurred during login. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -56,13 +119,16 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen" style={{
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    }}>
+    <div 
+      className="flex justify-center items-center min-h-screen" 
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      }}
+    >
       <div className="w-full max-w-md p-8">
         <form 
           className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4" 
@@ -89,7 +155,6 @@ const Login = () => {
                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="admin">Admin</option>
-               
                 <option value="volunteer">Volunteer</option>
               </select>
               <span className="absolute left-3 top-2.5 text-gray-500">
