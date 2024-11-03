@@ -61,9 +61,10 @@ A full-stack report generation application that allows users to manage and view 
 
 ## Project Structure
 
-- **client/**:Contains the React frontend application, including components for user interfaces like report tables, forms, and dashboards.
-- **server/**:Node.js backend, including routes, models, and controllers for handling report and user-related data.
-- **database/**:SQL scripts to create the required tables and populate them with sample data.
+- **client**:Contains the React frontend application, including components for user interfaces like report tables, forms, and dashboards.
+- **server**:Node.js backend, including routes, models, and controllers for handling report and user-related data.
+- **database**: PostgreSQL scripts to create the required tables and populate them with sample data.
+
 
 ## Tech Stack
 
