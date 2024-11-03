@@ -26,3 +26,16 @@ A full-stack report generation application that allows users to manage and view 
    ```bash
    git clone https://github.com/yourusername/Report-Generation-AP-S1.git
    cd Report-Generation-AP-S1
+2. **Install Dependencies**:
+   -**For the backend**:
+   ```bash
+   cd server
+npm install
+
+   -**For the Frontend**:
+   ```bash
+cd ../client
+npm install
+
+
+   
