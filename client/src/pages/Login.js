@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { LogIn, Shield, Users, ChevronDown } from 'lucide-react';
 import { useAuth } from '../components/AuthContext';
 import backgroundImage from '../assets/loginbgap.png';
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.SUPABASE_URL || 'https://fvgktzbhhumqwyjwylqf.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2Z2t0emJoaHVtcXd5and5bHFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA2NDkzNTksImV4cCI6MjA0NjIyNTM1OX0.40Ee4bWx_y3yi8oD4QY6PDs4qpOYcB_OLmtyYAC4Ge0';
+
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 const Login = () => {
   const { login } = useAuth();
@@ -17,6 +23,7 @@ const Login = () => {
 
   const handleRoleChange = (e) => {
     setRole(e.target.value);
+    setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -25,20 +32,67 @@ const Login = () => {
     setError('');
 
     try {
-      // Replace this with your actual authentication logic
-      const isValid = credentials.email && credentials.password;
+      let userData = null;
       
-      if (isValid) {
-        // Call the login function from AuthContext
-        login({ 
-          email: credentials.email, 
-          role: role 
-        });
+      if (role === 'admin') {
+        const { data, error } = await supabase
+          .from('admin')
+          .select('admin_id, admin_email, admin_password, admin_name')
+          .eq('admin_email', credentials.email.toLowerCase())
+          .single();
+
+        if (error || !data) {
+          throw new Error('Invalid admin credentials');
+        }
+
+        if (data.admin_password !== credentials.password) {
+          throw new Error('Invalid password');
+        }
+
+        userData = {
+          id: data.admin_id,
+          email: data.admin_email,
+          name: data.admin_name,
+          role: 'admin'
+        };
+
       } else {
-        setError('Invalid credentials. Please try again.');
+        const { data, error } = await supabase
+          .from('volunteer')
+          .select('volunteer_id, volunteer_email, volunteer_password, volunteer_name')
+          .eq('volunteer_email', credentials.email.toLowerCase())
+          .single();
+
+        if (error || !data) {
+          throw new Error('Invalid volunteer credentials');
+        }
+
+        if (data.volunteer_password !== credentials.password) {
+          throw new Error('Invalid password');
+        }
+
+        
+        userData = {
+          id: data.volunteer_id,
+          email: data.volunteer_email,
+          name: data.volunteer_name,
+          role: 'volunteer',
+          
+        };
       }
+
+      // Store session
+      const session = {
+        user: userData,
+        timestamp: new Date().getTime()
+      };
+      localStorage.setItem('userSession', JSON.stringify(session));
+
+      // Call the login function from AuthContext with the user data
+      login(userData);
+      
     } catch (err) {
-      setError('An error occurred during login. Please try again.');
+      setError(err.message || 'An error occurred during login. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -56,13 +110,16 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen" style={{
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    }}>
+    <div 
+      className="flex justify-center items-center min-h-screen" 
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      }}
+    >
       <div className="w-full max-w-md p-8">
         <form 
           className="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4" 
@@ -89,7 +146,6 @@ const Login = () => {
                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="admin">Admin</option>
-               
                 <option value="volunteer">Volunteer</option>
               </select>
               <span className="absolute left-3 top-2.5 text-gray-500">

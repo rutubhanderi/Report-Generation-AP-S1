@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { ChevronLeft, UserCircle, BarChart, Clock } from 'lucide-react';
 import ProfileSection from './ProfileSection';
 import ReportsTable from './ReportsTable';
-
+import { useAuth } from '../components/AuthContext'; // Import useAuth hook
 
 const VolunteerSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
-
+  const {user}= useAuth();
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const menuItems = [
@@ -58,7 +58,7 @@ const VolunteerSidebar = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-6">
-        {activeSection === 'profile' && <ProfileSection />}
+        {activeSection === 'profile' && <ProfileSection  volunteerID={user?.id} />}
         {activeSection === 'reports' && <ReportsTable />}
         
       </div>

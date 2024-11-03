@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Calendar, Briefcase, Award } from 'lucide-react';
 
-const ProfileSection = () => {
+const ProfileSection = ({volunteerID}) => {
   const [volunteerData, setVolunteerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
+  
+    useEffect(() => {
     const fetchVolunteerData = async () => {
       try {
-        const response = await fetch("http://localhost:3001/volunteer/volunteer/1"); // Default volunteer ID 1
+        const response = await fetch(`http://localhost:3001/volunteer/volunteer/${volunteerID}`); // Default volunteer ID 1
         if (!response.ok) {
           throw new Error('Failed to fetch volunteer data');
         }

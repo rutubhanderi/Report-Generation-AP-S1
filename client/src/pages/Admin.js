@@ -13,15 +13,13 @@ import Header from '../components/Header'
 import UserManagement from '../components/UserManagement';
 import AdminReportsTable from '../components/AdminReportsTable';
 import Profile from '../components/Profile';
+import { useAuth } from '../components/AuthContext'; // Import useAuth hook
 
-const Admins = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', password: '********' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', password: '********' },
-];
 
 // Main Dashboard Component
 const AdminDashboard = () => {
   const [currentPage, setCurrentPage] = useState('profile'); // Changed default to 'profile'
+  const { user } = useAuth();
 
   const renderContent = () => {
     switch(currentPage) {
@@ -29,10 +27,10 @@ const AdminDashboard = () => {
         return <UserManagement />;
       case 'reports':
         return <AdminReportsTable />;
-      case 'profile':
-        return <Profile adminId={1} />;
-      default:
-        return <Profile adminId={1}/>; // Changed default to Profile
+        case 'profile':
+          return <Profile adminId={user?.id} />; // Pass the admin ID from authenticated user
+        default:
+          return <Profile adminId={user?.id} />; // Also update default case
     }
   };
 
