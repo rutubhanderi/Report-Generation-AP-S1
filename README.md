@@ -70,7 +70,7 @@ A full-stack report generation application that allows users to manage and view 
 - **Frontend**:React, Tailwind CSS for styling, and Axios for API requests.
 - **Backend**:Node.js with Express for API routing and handling server-side logic.
 - **Database**:Supabase for database management and real-time data sync.
-- **Additional Language**: VB.NET for specific backend components or business logic (if applicable).
+
 
 
 
