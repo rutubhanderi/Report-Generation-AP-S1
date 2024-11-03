@@ -81,12 +81,13 @@ A full-stack report generation application that allows users to manage and view 
     - Organization: Choose the organization for the project ("Dhairya-A-Mehra").
     - Project Name: Enter a project name ("Akshar Paaul NGO Database").
     - Database Password: Set a secure password for the database or use the "Generate a password" option.
-    - Region: Choose the region closest to your users for optimal performance (e.g., "South Asia (Mumbai)").
+    - Region: Choose the region closest to your users for optimal performance ("South Asia (Mumbai)").
+      
       ![Screenshot 2024-10-29 091118](https://github.com/user-attachments/assets/bda9bac5-3007-402a-b2e7-2e98f57905a5)
 - Click **Create new project** to finalize.
 - Once created, your project will appear under your organization's list of projects in the dashboard .
-  ![Screenshot 2024-10-29 090929](https://github.com/user-attachments/assets/48cdc552-38df-4cdd-8f80-06026f8f919a)
 
+  ![Screenshot 2024-10-29 090929](https://github.com/user-attachments/assets/48cdc552-38df-4cdd-8f80-06026f8f919a)
 
 
 
