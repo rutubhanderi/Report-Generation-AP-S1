@@ -51,7 +51,7 @@ A full-stack report generation application that allows users to manage and view 
      cd client
      npm start
      ```
-   - The application should now be running, with the frontend typically accessible at http://localhost:3000 and the backend at http://localhost:5000 (or as specified in your configuration).
+   - The application should now be running, with the frontend typically accessible at http://localhost:3000 and the backend at http://localhost:3001 (or as specified in your configuration).
   
 ## Usage 
 
