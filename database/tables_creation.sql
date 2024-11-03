@@ -16,7 +16,7 @@ CREATE TABLE Admin (
 CREATE TABLE Volunteer (
     Volunteer_id SERIAL PRIMARY KEY,
     Volunteer_name CHAR(100) NOT NULL,
-    Volunteer_email CHAR(20) NOT NULL UNIQUE,
+    Volunteer_email CHAR(50) NOT NULL UNIQUE,
     Volunteer_address TEXT,
     Volunteer_phone VARCHAR(15),
     Volunteer_password TEXT NOT NULL, -- Stores hashed password
