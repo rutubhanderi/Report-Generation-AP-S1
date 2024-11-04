@@ -57,7 +57,7 @@ A full-stack report generation application that allows users to manage and view 
 
 - **Admin Login**: Log in using the admin credentials set in the admin_table_insertion.sql script. The admin dashboard will allow access to all report and user management features.
 - **Creating Reports**:On the dashboard, you can create new reports, edit existing ones, and assign tasks to volunteers.
-- **Volunteer Tasks**:Volunteers can log in, view assigned tasks, and update the status of their tasks.
+- **Editing and Printing Repors**:Volunteers can log in, view and update reports.Both admin and volunteers can view and print reports.
 
 ## Project Structure
 
@@ -68,7 +68,7 @@ A full-stack report generation application that allows users to manage and view 
 
 ## Tech Stack
 
-- **Frontend**:React, Tailwind CSS for styling, and Axios for API requests.
+- **Frontend**:React, Tailwind CSS for styling, and fetch api for API requests.
 - **Backend**:Node.js with Express for API routing and handling server-side logic.
 - **Database**:PostgreSQL for database and Supabase for database management and real-time data sync.
 
